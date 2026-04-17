@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Soil Intelligence & Precision Farming</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page-shell">
+    <section id="onboarding-screen" class="onboarding-screen">
+      <div class="onboarding-card">
+        <p class="eyebrow" data-i18n="onboardingEyebrow">Karnataka Farmer Setup</p>
+        <h1 data-i18n="onboardingTitle">Smart Soil Intelligence & Precision Farming</h1>
+        <p class="lede" data-i18n="onboardingLead">Choose your language and district to personalize crop advice, fertilizer planning, and field alerts.</p>
+
+        <div class="onboarding-grid">
+          <div class="onboarding-block">
+            <span class="block-label" data-i18n="languageLabel">Language</span>
+            <div class="language-row">
+              <button type="button" class="choice-pill active" data-language="en">English</button>
+              <button type="button" class="choice-pill" data-language="kn">ಕನ್ನಡ</button>
+            </div>
+          </div>
+
+          <div class="onboarding-block">
+            <label for="district-select" class="block-label" data-i18n="districtLabel">District</label>
+            <select id="district-select"></select>
+          </div>
+        </div>
+
+        <div class="onboarding-preview">
+          <div>
+            <span class="block-label" data-i18n="whyTitle">Why this matters</span>
+            <p id="district-note"></p>
+          </div>
+          <div class="preview-chip">
+            <span data-i18n="offlineReady">Offline Ready</span>
+            <strong data-i18n="demoHardware">Demo works without hardware</strong>
+          </div>
+        </div>
+
+        <button id="start-dashboard-btn" class="primary-button" type="button" data-i18n="continueBtn">Open Dashboard</button>
+      </div>
+    </section>
+
+    <div id="dashboard-shell" class="dashboard-shell hidden">
+      <header class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="heroEyebrow">Field Decision Support</p>
+          <h2 data-i18n="heroTitle">Regional soil intelligence for pre-crop planning and post-crop correction</h2>
+          <p class="lede" data-i18n="heroLead">Use real dataset-backed crop prediction, soil health scoring, fertilizer conversion in kg/hectare, and bilingual recommendations tailored for Karnataka districts.</p>
+        </div>
+        <div class="hero-side">
+          <div class="status-orb">
+            <span data-i18n="soilScore">Soil Score</span>
+            <strong id="hero-score">--</strong>
+          </div>
+          <button id="change-setup-btn" class="ghost-button" type="button" data-i18n="changeSetup">Change Setup</button>
+        </div>
+      </header>
+
+      <section class="selection-strip">
+        <div class="selection-chip"><span data-i18n="languageLabel">Language</span><strong id="selected-language">English</strong></div>
+        <div class="selection-chip"><span data-i18n="districtLabel">District</span><strong id="selected-district">Mandya</strong></div>
+        <div class="selection-chip"><span data-i18n="stageLabel">Stage</span><strong id="selected-stage">Pre-crop</strong></div>
+        <div class="selection-chip"><span data-i18n="modeLabel">Mode</span><strong id="selected-mode">AI</strong></div>
+        <div class="selection-chip"><span data-i18n="cropLabel">Crop</span><strong id="selected-crop">AI</strong></div>
+      </section>
+
+      <section class="control-grid">
+        <div class="control-card">
+          <span class="block-label" data-i18n="stageLabel">Stage</span>
+          <div class="button-row">
+            <button class="toggle-button active" data-choice="plantingMode" data-value="pre" type="button" data-i18n="preCrop">Pre-crop</button>
+            <button class="toggle-button" data-choice="plantingMode" data-value="post" type="button" data-i18n="postCrop">Post-crop</button>
+          </div>
+        </div>
+        <div class="control-card">
+          <span class="block-label" data-i18n="modeLabel">Mode</span>
+          <div class="button-row">
+            <button class="toggle-button active" data-choice="operationMode" data-value="ai" type="button" data-i18n="aiMode">AI Mode</button>
+            <button class="toggle-button" data-choice="operationMode" data-value="manual" type="button" data-i18n="manualMode">Manual Mode</button>
+          </div>
+        </div>
+        <div class="control-card">
+          <span class="block-label" data-i18n="dataModeLabel">Data Input</span>
+          <div class="button-row">
+            <button class="toggle-button active" data-choice="dataMode" data-value="demo" type="button" data-i18n="demoMode">Demo Mode</button>
+            <button class="toggle-button" data-choice="dataMode" data-value="live" type="button" data-i18n="liveMode">Live Sensor Mode</button>
+          </div>
+        </div>
+        <div class="control-card">
+          <span class="block-label" data-i18n="sampleModeLabel">Sample Type</span>
+          <div class="button-row">
+            <button class="toggle-button active" data-choice="sampleMode" data-value="single" type="button" data-i18n="singleSample">Single Sample</button>
+            <button class="toggle-button" data-choice="sampleMode" data-value="multiple" type="button" data-i18n="multipleSample">Multiple Sample</button>
+          </div>
+        </div>
+      </section>
+
+      <main class="content-grid">
+        <form id="soil-form" class="panel-card form-card">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow" data-i18n="inputEyebrow">Input Parameters</p>
+              <h3 data-i18n="inputTitle">Sensor or demo readings</h3>
+            </div>
+            <button id="generate-demo-btn" type="button" class="secondary-button" data-i18n="generateDemo">Generate Demo Data</button>
+          </div>
+
+          <div id="live-banner" class="info-banner hidden">
+            <strong data-i18n="liveBannerTitle">Live mode placeholder</strong>
+            <p data-i18n="liveBannerText">Hardware is optional for the demo. Simulated live readings keep the dashboard active when no sensor is connected.</p>
+          </div>
+
+          <div id="manual-crop-block" class="manual-crop-block hidden">
+            <label for="crop-select" class="block-label" data-i18n="cropLabel">Crop</label>
+            <select id="crop-select"></select>
+          </div>
+
+          <div class="input-grid">
+            <label class="input-card-small">
+              <span data-i18n="moistureLabel">Moisture (%)</span>
+              <input id="moistureRange" type="range" min="0" max="100" value="42">
+              <input id="moisture" name="moisture" type="number" min="0" max="100" value="42">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="phLabel">pH</span>
+              <input id="phRange" type="range" min="3" max="10" step="0.1" value="6.7">
+              <input id="ph" name="ph" type="number" min="3" max="10" step="0.1" value="6.7">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="ecLabel">EC</span>
+              <input id="ecRange" type="range" min="0" max="5" step="0.1" value="1.1">
+              <input id="ec" name="ec" type="number" min="0" max="5" step="0.1" value="1.1">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="temperatureLabel">Temperature (°C)</span>
+              <input id="temperatureRange" type="range" min="0" max="45" value="27">
+              <input id="temperature" name="temperature" type="number" min="0" max="45" value="27">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="nitrogenLabel">Nitrogen</span>
+              <input id="nitrogenRange" type="range" min="0" max="200" value="70">
+              <input id="nitrogen" name="nitrogen" type="number" min="0" max="200" value="70">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="phosphorusLabel">Phosphorus</span>
+              <input id="phosphorusRange" type="range" min="0" max="150" value="35">
+              <input id="phosphorus" name="phosphorus" type="number" min="0" max="150" value="35">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="potassiumLabel">Potassium</span>
+              <input id="potassiumRange" type="range" min="0" max="180" value="55">
+              <input id="potassium" name="potassium" type="number" min="0" max="180" value="55">
+            </label>
+            <label class="input-card-small">
+              <span data-i18n="rainfallLabel">Rainfall (mm)</span>
+              <input id="rainfallRange" type="range" min="100" max="1800" value="720">
+              <input id="rainfall" name="rainfall" type="number" min="100" max="1800" value="720">
+            </label>
+          </div>
+
+          <div id="multi-tools" class="multi-tools hidden">
+            <div class="multi-header">
+              <div>
+                <p class="eyebrow" data-i18n="zigzagEyebrow">Large Land Sampling</p>
+                <h3 data-i18n="zigzagTitle">Zig-zag 4-6 point collection</h3>
+                <p data-i18n="zigzagText">Walk the field in a zig-zag pattern and add 4-6 points. Analyze the average or switch to zone-based output.</p>
+              </div>
+              <div class="multi-actions">
+                <button id="add-sample-btn" type="button" class="secondary-button" data-i18n="addPoint">Add Current Point</button>
+                <button id="clear-samples-btn" type="button" class="ghost-button" data-i18n="clearPoints">Clear Points</button>
+              </div>
+            </div>
+            <div class="analysis-switch">
+              <span class="block-label" data-i18n="analysisLabel">Analysis Type</span>
+              <div class="button-row compact-row">
+                <button class="toggle-button active" data-choice="analysisType" data-value="average" type="button" data-i18n="averageValues">Average Values</button>
+                <button class="toggle-button" data-choice="analysisType" data-value="zone" type="button" data-i18n="zoneAnalysis">Zone Analysis</button>
+              </div>
+            </div>
+            <div id="sample-list" class="sample-list"></div>
+          </div>
+
+          <button id="analyze-btn" class="primary-button" type="submit" data-i18n="analyzeButton">Analyze Soil Intelligence</button>
+        </form>
+
+        <section class="panel-card result-card">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow" data-i18n="outputEyebrow">Recommendation Output</p>
+              <h3 data-i18n="outputTitle">Field decision dashboard</h3>
+            </div>
+            <span id="health-pill" class="health-pill neutral">Waiting</span>
+          </div>
+
+          <div class="summary-box">
+            <div>
+              <span class="summary-label" data-i18n="summaryStrip">Current Context</span>
+              <strong id="selection-summary">--</strong>
+            </div>
+            <p id="farmer-message">--</p>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card accent-blue">
+              <span data-i18n="soilHealthCard">Soil Health</span>
+              <strong id="soil-health-text">--</strong>
+              <small id="key-issue-text">--</small>
+            </article>
+            <article class="metric-card accent-green">
+              <span data-i18n="cropCard">Recommended Crop</span>
+              <strong id="crop-text">--</strong>
+              <small id="crop-subtext">--</small>
+            </article>
+            <article class="metric-card accent-amber">
+              <span data-i18n="irrigationCard">Irrigation Advice</span>
+              <strong id="irrigation-text">--</strong>
+            </article>
+            <article class="metric-card accent-red">
+              <span data-i18n="incomeCard">Income Suggestion</span>
+              <strong id="income-text">--</strong>
+            </article>
+          </div>
+
+          <div class="fertilizer-card">
+            <div class="fertilizer-head">
+              <div>
+                <span class="summary-label" data-i18n="fertilizerCard">Fertilizer Recommendation (kg/ha)</span>
+                <strong id="fertilizer-note">--</strong>
+              </div>
+              <div class="fert-badges">
+                <span id="urea-badge">Urea --</span>
+                <span id="dap-badge">DAP --</span>
+                <span id="mop-badge">MOP --</span>
+              </div>
+            </div>
+            <div id="nutrient-plan" class="nutrient-plan"></div>
+          </div>
+
+          <canvas id="soil-chart" height="240"></canvas>
+        </section>
+      </main>
+
+      <section class="insight-grid">
+        <section class="panel-card">
+          <div class="card-head"><h3 data-i18n="alertsTitle">Alerts</h3></div>
+          <div id="alerts-list" class="list-stack"></div>
+        </section>
+        <section class="panel-card">
+          <div class="card-head"><h3 data-i18n="deficiencyTitle">Nutrient Deficiency Detection</h3></div>
+          <div id="deficiency-list" class="list-stack"></div>
+        </section>
+        <section class="panel-card">
+          <div class="card-head"><h3 data-i18n="weatherTitle">Weather & Rotation</h3></div>
+          <div id="weather-rotation" class="list-stack"></div>
+        </section>
+        <section class="panel-card">
+          <div class="card-head"><h3 data-i18n="historyTitle">Data History</h3></div>
+          <div id="history-list" class="list-stack"></div>
+        </section>
+      </section>
+
+      <section class="insight-grid bottom-grid">
+        <section class="panel-card wide-card">
+          <div class="card-head"><h3 data-i18n="explanationTitle">Why this recommendation?</h3></div>
+          <div id="explanations-list" class="list-stack"></div>
+        </section>
+        <section class="panel-card wide-card">
+          <div class="card-head"><h3 data-i18n="zoneTitle">Zone Analysis</h3></div>
+          <div id="zone-list" class="zone-list"></div>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
